@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Outbox dispatcher for zeloop.",
   "license": "MIT",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -12,6 +13,27 @@
       "default": "./dist/index.js"
     }
   },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tassan/zeloop.git",
+    "directory": "packages/outbox"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "zeloop",
+    "outbox",
+    "dispatcher",
+    "event-handler",
+    "transactional-outbox",
+    "error-policy"
+  ],
   "dependencies": {
     "@zeloop/core": "workspace:*"
   },

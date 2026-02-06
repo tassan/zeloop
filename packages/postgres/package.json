@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Postgres adapter for zeloop.",
   "license": "MIT",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -12,8 +13,38 @@
       "default": "./dist/index.js"
     }
   },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tassan/zeloop.git",
+    "directory": "packages/postgres"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "zeloop",
+    "postgres",
+    "outbox",
+    "skip-locked",
+    "advisory-lock",
+    "reaper",
+    "idempotency"
+  ],
   "dependencies": {
     "@zeloop/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "pg": ">=8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "pg": {
+      "optional": true
+    }
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

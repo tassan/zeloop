@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "DB-agnostic worker engine for zeloop.",
   "license": "MIT",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -12,6 +13,28 @@
       "default": "./dist/index.js"
     }
   },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tassan/zeloop.git",
+    "directory": "packages/core"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "zeloop",
+    "worker",
+    "batch",
+    "async",
+    "jobs",
+    "backpressure",
+    "graceful-shutdown"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rimraf dist || rm -rf dist || true",
