@@ -1,0 +1,93 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Package to release
+        required: true
+        type: choice
+        options:
+          - core
+          - postgres
+          - outbox
+      version:
+        description: Version to publish (e.g. 0.1.0)
+        required: true
+        type: string
+      dry-run:
+        description: Dry run (skip actual publish)
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - run: pnpm run test
+      - run: pnpm run test:integration
+
+      - name: Verify package version
+        run: |
+          PKG_VERSION=$(node -p "require('./packages/${{ inputs.package }}/package.json').version")
+          if [ "$PKG_VERSION" != "${{ inputs.version }}" ]; then
+            echo "::error::package.json version ($PKG_VERSION) does not match input (${{ inputs.version }})"
+            exit 1
+          fi
+
+      - name: Verify changelog entry
+        run: |
+          if ! grep -q "\[${{ inputs.version }}\]" "packages/${{ inputs.package }}/CHANGELOG.md"; then
+            echo "::error::CHANGELOG.md has no entry for version ${{ inputs.version }}"
+            exit 1
+          fi
+
+      - name: Publish to npm
+        working-directory: packages/${{ inputs.package }}
+        run: |
+          if [ "${{ inputs.dry-run }}" = "true" ]; then
+            pnpm publish --access public --provenance --no-git-checks --dry-run
+          else
+            pnpm publish --access public --provenance --no-git-checks
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create git tag
+        if: inputs.dry-run == false
+        run: |
+          TAG="@zeloop/${{ inputs.package }}@${{ inputs.version }}"
+          git tag "$TAG"
+          git push origin "$TAG"
+
+      - name: Create GitHub release
+        if: inputs.dry-run == false
+        run: |
+          TAG="@zeloop/${{ inputs.package }}@${{ inputs.version }}"
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes "See [CHANGELOG](packages/${{ inputs.package }}/CHANGELOG.md) for details." \
+            --latest=false
+        env:
+          GH_TOKEN: ${{ github.token }}
