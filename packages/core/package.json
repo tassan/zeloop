@@ -1,0 +1,20 @@
+{
+  "name": "@zeloop/core",
+  "version": "0.0.0",
+  "description": "DB-agnostic worker engine for zeloop.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf dist || rm -rf dist || true",
+    "test": "vitest"
+  }
+}

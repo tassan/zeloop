@@ -1,0 +1,23 @@
+{
+  "name": "@zeloop/outbox",
+  "version": "0.0.0",
+  "description": "Outbox dispatcher for zeloop.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "dependencies": {
+    "@zeloop/core": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf dist || rm -rf dist || true",
+    "test": "vitest"
+  }
+}

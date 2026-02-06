@@ -1,0 +1,40 @@
+---
+description: Agent workflow rules — how AI agents must approach tasks in this project
+globs:
+alwaysApply: true
+---
+
+# Agent workflow
+
+This project is built by AI agents. Follow these rules strictly.
+
+## Docs are the source of truth
+
+- **Always read the relevant `docs/*.md` files before implementing anything.** The design docs define the public API, SQL contract, invariants, and error policies. Do not invent new APIs or deviate from the documented designs without explicit approval.
+- If you find a contradiction between code and docs, the docs win. Fix the code.
+- If a design doc is missing detail you need, ask — do not guess.
+
+## Task execution order
+
+When implementing a feature, follow this exact order:
+
+1. Read the relevant `docs/*.md` files.
+2. Write the type definitions / interfaces first (they are documented in the design docs).
+3. Write failing tests for the behavior (TDD red step).
+4. Implement the minimal code to pass the tests (TDD green step).
+5. Refactor if needed (TDD refactor step).
+6. Update the package's `CHANGELOG.md`.
+7. Commit with a proper conventional commit message.
+
+## Things agents must NOT do
+
+- Do not add dependencies without explicit approval. This project is minimal by design.
+- Do not introduce abstractions "for the future." Solve the current problem only.
+- Do not modify `docs/*.md` design files unless explicitly asked. These are maintained by the project owner.
+- Do not create README files in sub-packages unless asked.
+- Do not add comments that restate the code. Only comment non-obvious *why*.
+- Do not use `console.log` for observability. Use the `Telemetry` interface.
+- Do not hardcode table names. Use the configurable table name options with safe defaults.
+- Do not use session-level advisory locks. Always use `pg_try_advisory_xact_lock`.
+- Do not over-engineer. No feature flags, no backwards-compatibility shims, no premature abstractions.
+- Do not add error handling for scenarios that cannot happen. Only validate at system boundaries.

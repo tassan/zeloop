@@ -25,8 +25,10 @@ export interface OutboxEvent<TPayload = unknown> {
 ## Handlers and registry
 
 ```ts
-export type OutboxHandler<TPayload = unknown> =
-  (event: OutboxEvent<TPayload>, ctx: import("@zeloop/core").ZeloopContext) => Promise<void>;
+export type OutboxHandler<TPayload = unknown> = (
+  event: OutboxEvent<TPayload>,
+  ctx: import("@zeloop/core").ZeloopContext
+) => Promise<void>;
 
 export interface OutboxHandlerRegistry {
   get(eventType: string): OutboxHandler | undefined;
@@ -39,10 +41,7 @@ Recommended default: `createRegistry({ "user.created.v1": handler, ... })`.
 ## Error policy
 
 ```ts
-export type OutboxErrorDecision =
-  | { type: "retry" }
-  | { type: "dead" }
-  | { type: "throw" };
+export type OutboxErrorDecision = { type: "retry" } | { type: "dead" } | { type: "throw" };
 
 export interface OutboxErrorPolicy {
   decide(error: unknown, event: OutboxEvent, ctx: ZeloopContext): OutboxErrorDecision;
@@ -50,6 +49,7 @@ export interface OutboxErrorPolicy {
 ```
 
 Default recommendation:
+
 - Unhandled event type => `dead` immediately (do not burn attempts)
 - All other errors => `throw` (let worker retry policy decide)
 
@@ -63,6 +63,7 @@ export interface IdempotencyStore {
 ```
 
 The dispatcher may be configured with:
+
 - `keyOf(event)` deterministic key
 - `ttlMs` for `started` expiry
 - optional `resultHashOf(event)` for observability
@@ -86,4 +87,5 @@ export interface OutboxDispatcherOptions {
 `createOutboxDispatcher(opts)` returns a `OutboxHandler` compatible with the core worker.
 
 ## Helper: createOutboxWorker
+
 A convenience factory that wires: source + dispatcher + retryPolicy into `createWorker()`.

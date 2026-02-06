@@ -16,7 +16,9 @@ export interface PgAdapter {
 ```
 
 ## Identifier safety
+
 Because the adapter may accept configurable table names, `@zeloop/postgres` should:
+
 - validate identifiers (allow `[a-zA-Z0-9_.]`)
 - quote schema/table parts safely (`"schema"."table"`)
 
@@ -29,7 +31,7 @@ export interface PgOutboxSourceOptions {
   table?: string; // default "zeloop_outbox_events"
   deadLetter?: {
     enabled: boolean;
-    table?: string;      // default "zeloop_dead_letters"
+    table?: string; // default "zeloop_dead_letters"
     sourceName?: string; // default "outbox"
   };
 }
@@ -45,10 +47,12 @@ export function createPgOutboxSource(
 ```
 
 ### Notes
+
 - Prefer returning `id::text` and operating with `WHERE id::text = ANY($1::text[])` to avoid JS bigint issues.
 - Dead-letter insertion (if enabled) is best done in the same transaction as `fail()` / `retry()->dead`.
 
 ## Reaper task
+
 A helper that requeues stuck `processing` items:
 
 ```ts
@@ -68,7 +72,7 @@ export function createPgOutboxReaperTask(
 
 ```ts
 export interface PgIdempotencyStoreOptions {
-  table?: string;       // default "zeloop_idempotency_keys"
+  table?: string; // default "zeloop_idempotency_keys"
   startedTtlMs: number; // e.g. 15 minutes
 }
 
@@ -79,20 +83,17 @@ export function createPgIdempotencyStore(
 ```
 
 Canonical algorithm:
-1) Try insert `(key, started)`; if inserted => acquired
-2) Else try steal if `status=started` and `created_at` older than ttl; if updated => acquired
-3) Else => exists
+
+1. Try insert `(key, started)`; if inserted => acquired
+2. Else try steal if `status=started` and `created_at` older than ttl; if updated => acquired
+3. Else => exists
 
 ## Advisory locks (global jobs)
 
 ```ts
 export function advisoryKey(jobName: string, bucket?: number): { k1: number; k2: number };
 
-export async function tryAdvisoryXactLock(
-  tx: PgExecutor,
-  k1: number,
-  k2: number
-): Promise<boolean>;
+export async function tryAdvisoryXactLock(tx: PgExecutor, k1: number, k2: number): Promise<boolean>;
 ```
 
 Use `pg_try_advisory_xact_lock(k1,k2)` to avoid pool leak issues.

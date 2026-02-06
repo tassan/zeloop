@@ -106,6 +106,7 @@ RETURNING e.*;
 ### 1.5 Complete / retry / fail
 
 **Complete (terminal success):**
+
 ```sql
 UPDATE zeloop_outbox_events
 SET status = 'sent',
@@ -116,6 +117,7 @@ WHERE id::text = ANY($1::text[])
 ```
 
 **Retry (pending again or dead):**
+
 ```sql
 UPDATE zeloop_outbox_events
 SET status = CASE
@@ -137,6 +139,7 @@ RETURNING id::text AS id, status, attempts, available_at;
 ```
 
 **Fail (dead immediately):**
+
 ```sql
 UPDATE zeloop_outbox_events
 SET status = 'dead',

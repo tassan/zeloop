@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd /c \"dir C:\\\\code\\\\zeloop\")",
+      "Bash(cmd /c \"mkdir C:\\\\code\\\\zeloop\\\\.cursor\\\\rules\")",
+      "Bash(python:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)",
+      "Bash(cmd /c \"mkdir C:\\\\code\\\\zelar\\\\.cursor\\\\rules\")",
+      "Bash(dir:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(npx tsc:*)",
+      "Bash(docker --version:*)",
+      "Bash(pnpm add:*)",
+      "Bash(cmd /c:*)",
+      "Bash(pnpm install)",
+      "Bash(npx turbo:*)",
+      "Bash(pnpm run build:*)",
+      "Bash(pnpm test:*)"
+    ]
+  }
+}

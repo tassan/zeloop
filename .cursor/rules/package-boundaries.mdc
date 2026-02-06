@@ -1,0 +1,35 @@
+---
+description: Package dependency rules — enforced when importing across packages
+globs: packages/**/*.ts
+alwaysApply: false
+---
+
+# Package boundaries
+
+Dependency direction is strict and must never be violated:
+
+```
+@zeloop/outbox   →  @zeloop/core       (allowed)
+@zeloop/postgres →  @zeloop/core       (allowed)
+
+@zeloop/outbox   ✗  @zeloop/postgres   (FORBIDDEN — no direct dependency)
+@zeloop/core     ✗  @zeloop/postgres   (FORBIDDEN — core has no adapter deps)
+@zeloop/core     ✗  @zeloop/outbox     (FORBIDDEN — core has no plugin deps)
+```
+
+## Package rules
+
+- **@zeloop/core** has zero runtime dependencies. It is DB-agnostic. It must never import from `@zeloop/postgres` or `@zeloop/outbox`.
+- **@zeloop/postgres** depends on `@zeloop/core` only (for types like `BatchSource`, `ZeloopContext`).
+- **@zeloop/outbox** depends on `@zeloop/core` only (for types like `ZeloopContext`, `Worker`).
+- **@zeloop/outbox** does NOT depend on `@zeloop/postgres`. The wiring between outbox and postgres happens in user code or in `examples/`.
+
+## How to check
+
+If you find yourself importing across a forbidden boundary, you are doing it wrong. Refactor by:
+
+1. Moving shared types to `@zeloop/core`.
+2. Using dependency injection (pass adapters as arguments, not imports).
+3. Defining interfaces in the consuming package that the provider implements.
+
+The `BatchSource` interface in core is the canonical example: core defines it, postgres implements it, user code wires them together.

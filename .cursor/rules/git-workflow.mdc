@@ -1,0 +1,66 @@
+---
+description: Git trunk-based development and conventional commit rules
+globs:
+alwaysApply: true
+---
+
+# Git — trunk-based development
+
+- **Main branch: `main`.** All work targets `main`.
+- **Short-lived feature branches only.** Branch naming: `<type>/<short-description>` (e.g., `feat/create-worker`, `fix/reaper-stuck-ids`, `test/outbox-claim-concurrency`).
+- Branches must be short-lived (ideally a single session). Merge via squash or fast-forward — no merge commits.
+- Never force-push to `main`.
+- Keep `main` green at all times. Do not merge broken code.
+
+# Conventional Commits
+
+Every commit message must follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer]
+```
+
+## Types
+
+- `feat` — new feature (triggers MINOR bump)
+- `fix` — bug fix (triggers PATCH bump)
+- `test` — adding or updating tests (no version bump)
+- `refactor` — code change that neither fixes a bug nor adds a feature
+- `docs` — documentation only
+- `chore` — build, tooling, CI changes
+- `perf` — performance improvement
+
+## Scope
+
+The package name without the `@zeloop/` prefix: `core`, `postgres`, `outbox`, `testing`.
+
+## Examples
+
+```
+feat(core): add createWorker with backpressure and graceful shutdown
+test(core): add failing test for worker idle delay behavior
+fix(postgres): cast outbox ids to text to avoid bigint overflow
+refactor(outbox): extract error policy into separate module
+docs: update sql-contract with dead letter indexes
+```
+
+## Commit rules
+
+- Subject line: imperative mood, lowercase, no period, max 72 chars.
+- Body: wrap at 80 chars. Explain *why*, not *what*.
+- Breaking changes: add `BREAKING CHANGE:` footer (triggers MAJOR bump).
+- One logical change per commit. Do not bundle unrelated changes.
+
+# PR workflow
+
+- Every PR must have:
+  1. A clear title following conventional commits format.
+  2. A summary of what changed and why.
+  3. Passing tests (all existing + new).
+  4. Changelog updated.
+- PRs should be small and focused. One feature or fix per PR.
+- If a PR touches multiple packages, explain why they must be coupled.

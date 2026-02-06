@@ -1,0 +1,38 @@
+---
+description: Test-Driven Development rules — applies when writing or modifying source and test files
+globs: packages/**/*.ts
+alwaysApply: false
+---
+
+# Test-Driven Development (TDD)
+
+Every feature and bug fix must follow the red-green-refactor cycle:
+
+1. **Red** — Write a failing test first. Commit it. The test must clearly express the intended behavior.
+2. **Green** — Write the minimal production code to make the test pass. Commit it.
+3. **Refactor** — Clean up the implementation while keeping tests green. Commit it.
+
+## Rules
+
+- Never write production code without a corresponding test.
+- Never skip the failing-test step. If you write code and tests together, the test must fail when the production code is reverted.
+- Test runner: `vitest`.
+- Prefer small, focused tests. One behavior per test.
+- Use descriptive test names: `"retries item when handler throws and retryPolicy returns delay"`.
+
+## Test file locations
+
+- **Unit tests**: colocate with source as `<module>.test.ts`.
+  - Example: `packages/core/src/worker.ts` → `packages/core/src/worker.test.ts`.
+- **Integration tests** (need Postgres): `packages/<pkg>/src/__tests__/`.
+  - Use testcontainers for Postgres.
+- **v0.1 required integration tests**: `packages/postgres/src/__tests__/integration/`.
+  - 2 workers / 1000 events: all processed.
+  - Crash simulation + reaper recovery.
+  - Scheduler global: N instances → 1 execution per bucket.
+
+## Testing patterns
+
+- Use fakes/stubs for `BatchSource` and `PgAdapter` in unit tests — do not mock Postgres.
+- Integration tests own their own schema setup and teardown.
+- Test edge cases: empty batches, max attempts exceeded, concurrent claims, stuck processing recovery.
